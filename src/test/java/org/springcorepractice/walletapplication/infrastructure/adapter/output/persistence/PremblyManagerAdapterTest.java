@@ -5,8 +5,9 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springcorepractice.walletapplication.application.output.identity.IdentityVerificationOutputPort;
-import org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.response.PremblyNinResponse;
-import org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.response.PremblyResponse;
+import org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.response.premblyresponses.PremblyNinResponse;
+import org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.response.premblyresponses.PremblyResponse;
+import org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.response.premblyresponses.Verification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -20,9 +21,14 @@ public class PremblyManagerAdapterTest {
     private IdentityVerificationOutputPort identityVerificationOutputPort;
 
     private PremblyResponse premblyResponse;
+    private Verification verification;
 
     @BeforeEach
     void setUp(){
+        verification = Verification.builder()
+                .status("verified")
+                .reference("ref_123456")
+                .build();
         premblyResponse = PremblyResponse.builder()
                 .verificationCallSuccessful(true)
                 .detail("Verification successful")
@@ -83,10 +89,7 @@ public class PremblyManagerAdapterTest {
                         .confidence("99.99")
                         .responseCode("200")
                         .build())
-                        .verification(PremblyResponse.Verification.builder()
-                        .status("verified")
-                        .reference("ref_123456")
-                        .build())
+                        .verification(verification)
                 .session(ObjectUtils.NULL)
                 .build();
 

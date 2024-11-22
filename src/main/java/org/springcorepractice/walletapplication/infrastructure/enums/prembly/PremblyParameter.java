@@ -12,6 +12,7 @@ import lombok.Getter;
     NIN_NUMBER("number"),
     APPLICATION_JSON("application/json"),
     NIN_FACE_URL("/nin_w_face"),
+    NIN_LIVENESS_URL("/biometrics/face/liveliness_check"),
     NIN_IMAGE("image");
 
     private final String value;

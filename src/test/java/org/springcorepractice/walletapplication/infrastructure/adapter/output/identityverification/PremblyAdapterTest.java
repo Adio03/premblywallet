@@ -10,7 +10,9 @@ import org.mockito.Mock;
 import org.springcorepractice.walletapplication.application.output.identity.IdentityVerificationManagerOutputPort;
 import org.springcorepractice.walletapplication.domain.exceptions.IdentityManagerException;
 import org.springcorepractice.walletapplication.domain.model.identity.IdentityVerification;
-import org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.response.PremblyResponse;
+import org.springcorepractice.walletapplication.domain.model.identity.LivelinessVerification;
+import org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.response.premblyresponses.PremblyLivelinessResponse;
+import org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.response.premblyresponses.PremblyResponse;
 import org.springcorepractice.walletapplication.infrastructure.adapters.output.identityverification.PremblyAdapter;
 import org.springcorepractice.walletapplication.infrastructure.enums.prembly.PremblyResponseCode;
 import org.springcorepractice.walletapplication.infrastructure.enums.prembly.PremblyVerificationMessage;
@@ -31,10 +33,14 @@ public class PremblyAdapterTest {
     @Mock
     private PremblyAdapter premblyAdapter;
     private IdentityVerification identityVerification;
+    private LivelinessVerification livelinessVerification;
 
     @BeforeEach
     void setUp() {
         identityVerification = IdentityVerification.builder().nin("33704462248").
+                imageUrl("https://res.cloudinary.com/drhrd1xkn/image/upload/v1732027769/oebgq4kj0b0n3avrtxqa.jpg").build();
+
+        livelinessVerification = LivelinessVerification.builder().
                 imageUrl("https://res.cloudinary.com/drhrd1xkn/image/upload/v1732027769/oebgq4kj0b0n3avrtxqa.jpg").build();
     }
 
@@ -100,6 +106,15 @@ public class PremblyAdapterTest {
         assertFalse(response.isVerificationCallSuccessful());
 
         verify(premblyAdapter, times(1)).verifyIdentity(identityVerification);
+    }
+    @Test
+    void verifyLivelinessYTest(){
+        PremblyLivelinessResponse livelinessResponse = identityVerificationManagerOutputPort.verifyLiveliness(livelinessVerification);
+        assertNotNull(livelinessResponse);
+        log.info("Response...{}",livelinessResponse);
+        assertTrue(livelinessResponse.isStatus());
+        assertEquals(PremblyResponseCode.SUCCESSFUL.getCode(),livelinessResponse.getResponseCode());
+        assertTrue(livelinessResponse.getVerification().isValidNin());
     }
 
     @Test

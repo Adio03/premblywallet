@@ -2,8 +2,8 @@ package org.springcorepractice.walletapplication.infrastructure.adapters.output.
 
 import lombok.RequiredArgsConstructor;
 import org.springcorepractice.walletapplication.application.output.identity.IdentityVerificationOutputPort;
-import org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.response.PremblyNinResponse;
-import org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.response.PremblyResponse;
+import org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.response.premblyresponses.PremblyNinResponse;
+import org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.response.premblyresponses.PremblyResponse;
 import org.springcorepractice.walletapplication.infrastructure.adapters.output.persistence.entity.PremblyResponseEntity;
 import org.springcorepractice.walletapplication.infrastructure.adapters.output.persistence.mapper.PremblyMapper;
 import org.springframework.stereotype.Service;

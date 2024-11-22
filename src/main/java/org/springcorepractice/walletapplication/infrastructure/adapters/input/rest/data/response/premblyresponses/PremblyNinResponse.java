@@ -1,4 +1,4 @@
-package org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.response;
+package org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.response.premblyresponses;
 
 import lombok.Getter;
 import lombok.Setter;

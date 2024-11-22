@@ -2,8 +2,8 @@ package org.springcorepractice.walletapplication.infrastructure.adapters.output.
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.response.PremblyNinResponse;
-import org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.response.PremblyResponse;
+import org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.response.premblyresponses.PremblyNinResponse;
+import org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.response.premblyresponses.PremblyResponse;
 import org.springcorepractice.walletapplication.infrastructure.adapters.output.persistence.entity.PremblyResponseEntity;
 
 @Mapper(componentModel= "spring")
