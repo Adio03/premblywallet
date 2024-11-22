@@ -6,15 +6,20 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mock;
 import org.springcorepractice.walletapplication.application.output.identity.IdentityVerificationManagerOutputPort;
 import org.springcorepractice.walletapplication.domain.exceptions.IdentityManagerException;
 import org.springcorepractice.walletapplication.domain.model.identity.IdentityVerification;
 import org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.response.PremblyResponse;
+import org.springcorepractice.walletapplication.infrastructure.adapters.output.identityverification.PremblyAdapter;
+import org.springcorepractice.walletapplication.infrastructure.enums.prembly.PremblyResponseCode;
 import org.springcorepractice.walletapplication.infrastructure.enums.prembly.PremblyVerificationMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -23,6 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PremblyAdapterTest {
     @Autowired
     private IdentityVerificationManagerOutputPort identityVerificationManagerOutputPort;
+    @Mock
+    private PremblyAdapter premblyAdapter;
     private IdentityVerification identityVerification;
 
     @BeforeEach
@@ -36,11 +43,11 @@ public class PremblyAdapterTest {
         PremblyResponse response = identityVerificationManagerOutputPort.verifyIdentity(identityVerification);
         log.info("Response ----> {}", response);
         assertNotNull(response);
-        assertEquals("00",response.getResponseCode());
-        assertTrue(response.isVerified());
-        assertEquals("00",response.getFaceData().getResponseCode());
+        assertEquals(PremblyResponseCode.SUCCESSFUL.getCode(),response.getResponseCode());
+        assertTrue(response.isVerificationCallSuccessful());
+        assertEquals(PremblyResponseCode.SUCCESSFUL.getCode(),response.getFaceData().getResponseCode());
         assertTrue(response.getFaceData().isFaceVerified());
-        assertTrue(response.getVerification().isIdentityVerified());
+        assertTrue(response.getVerification().isValidNin());
         assertEquals(response.getNinData().getNin(),identityVerification.getNin());
     }
 
@@ -49,30 +56,52 @@ public class PremblyAdapterTest {
         identityVerification.setImageUrl("https://res.cloudinary.com/drhrd1xkn/image/upload/v1732042468/gi2ppo8hsivajcn74idz.jpg");
         PremblyResponse response = identityVerificationManagerOutputPort.verifyIdentity(identityVerification);
         assertNotNull(response);
-        assertTrue(response.isVerified());
-        assertEquals("VERIFIED",response.getVerification().getStatus());
+        assertEquals(PremblyResponseCode.SUCCESSFUL_RECORD_NOT_FOUND.getCode(),response.getFaceData().getResponseCode());
+        assertTrue(response.isVerificationCallSuccessful());
+        assertEquals(PremblyVerificationMessage.VERIFIED.getMessage(),response.getVerification().getStatus());
         assertFalse(response.getFaceData().isFaceVerified());
-        assertEquals("01",response.getFaceData().getResponseCode());
+        assertTrue(response.getVerification().isValidNin());
+
     }
 
     @Test
     void verifyIdentityWithInvalidNin() throws IdentityManagerException {
         identityVerification.setNin("12345678901");
         PremblyResponse response = identityVerificationManagerOutputPort.verifyIdentity(identityVerification);
+        log.info("......{}", response);
         assertNotNull(response);
-        assertTrue(response.isVerified());
-        assertEquals("01",response.getResponseCode());
-        assertEquals("NOT-VERIFIED",response.getVerification().getStatus());
+        assertTrue(response.isVerificationCallSuccessful());
+        assertEquals(PremblyResponseCode.SUCCESSFUL_RECORD_NOT_FOUND.getCode(),response.getResponseCode());
     }
+
     @Test
     void verifyIdentityWhenImageIsNotPosition() throws IdentityManagerException {
         identityVerification.setImageUrl("https://res.cloudinary.com/drhrd1xkn/image/upload/v1732027712/ez15xfsdj3whhd5kwscs.jpg");
         PremblyResponse response = identityVerificationManagerOutputPort.verifyIdentity(identityVerification);
         assertNotNull(response);
-        assertTrue(response.isVerified());
+        assertTrue(response.isVerificationCallSuccessful());
         assertFalse(response.getFaceData().isFaceVerified());
         assertEquals(PremblyVerificationMessage.PREMBLY_FACE_CONFIRMATION.getMessage(),response.getFaceData().getMessage());
     }
+
+    @Test
+    void verifyIdentityWhenBalanceIsInsufficient() throws IdentityManagerException {
+        PremblyResponse insufficientBalanceResponse = PremblyResponse.builder()
+                .responseCode(PremblyResponseCode.INSUFFICIENT_WALLET_BALANCE.getCode())
+                .verificationCallSuccessful(false)
+                .build();
+
+        when(premblyAdapter.verifyIdentity(identityVerification))
+                .thenReturn(insufficientBalanceResponse);
+
+        PremblyResponse response =premblyAdapter.verifyIdentity(identityVerification);
+        assertNotNull(response);
+        assertEquals(PremblyResponseCode.INSUFFICIENT_WALLET_BALANCE.getCode(), response.getResponseCode());
+        assertFalse(response.isVerificationCallSuccessful());
+
+        verify(premblyAdapter, times(1)).verifyIdentity(identityVerification);
+    }
+
     @Test
     void verifyIdentityWithNullIdentityVerification() {
         assertThrows(IdentityManagerException.class, () -> identityVerificationManagerOutputPort.verifyIdentity(null));
