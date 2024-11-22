@@ -25,6 +25,7 @@ public class UserIdentity {
     private String accessToken;
     private String refreshToken;
     private String nin;
+    private String imageUrl;
     private WalletIdentity walletIdentity;
 
 }

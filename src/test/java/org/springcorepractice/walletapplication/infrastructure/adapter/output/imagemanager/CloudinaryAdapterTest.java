@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springcorepractice.walletapplication.application.output.ImageManager.ImageManagerOutputPort;
 import org.springcorepractice.walletapplication.domain.exceptions.IdentityManagerException;
 import org.springcorepractice.walletapplication.infrastructure.utilities.FileConverterTest;
+import org.springcorepractice.walletapplication.infrastructure.utilities.ImageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -36,25 +37,25 @@ public class CloudinaryAdapterTest {
     @Test
     void uploadImage() throws IdentityManagerException, IOException {
 
-        String response = imageManagerOutputPort.uploadImage(FileConverterTest.getFileTest(AWWAL));
+        String response = imageManagerOutputPort.uploadImage(content);
         log.info("AWWAL {}", response);
         assertNotNull(response);
     }
     @Test
     void uploadTPain() throws IdentityManagerException, IOException {
-        String response = imageManagerOutputPort.uploadImage(FileConverterTest.getFileTest(T_PAIN));
+        String response = imageManagerOutputPort.uploadImage(ImageConverter.encodeImageToBase64(T_PAIN));
         log.info("T-pain {}", response);
         assertNotNull(response);
     }
     @Test
     void uploadCat() throws IdentityManagerException, IOException {
-        String response = imageManagerOutputPort.uploadImage(FileConverterTest.getFileTest(EBUKA));
+        String response = imageManagerOutputPort.uploadImage(ImageConverter.encodeImageToBase64(EBUKA));
         log.info("Ebuke {}", response);
         assertNotNull(response);
     }
     @Test
     void uploadEbuka() throws IdentityManagerException, IOException {
-        String response = imageManagerOutputPort.uploadImage(FileConverterTest.getFileTest(DIDDY));
+        String response = imageManagerOutputPort.uploadImage(ImageConverter.encodeImageToBase64(DIDDY));
         log.info("Image---> {}", response);
         assertNotNull(response);
     }
@@ -63,7 +64,7 @@ public class CloudinaryAdapterTest {
     @NullSource
     @ValueSource(strings = {StringUtils.EMPTY, StringUtils.SPACE, "23245"})
     void uploadImageInput(String element){
-        assertThrows(IdentityManagerException.class,()-> imageManagerOutputPort.uploadImage(FileConverterTest.getFileTest(element)));
+        assertThrows(IdentityManagerException.class,()-> imageManagerOutputPort.uploadImage(ImageConverter.encodeImageToBase64(element)));
 
     }
 

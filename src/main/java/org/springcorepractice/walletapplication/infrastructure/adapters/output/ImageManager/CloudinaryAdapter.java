@@ -24,8 +24,10 @@ public class CloudinaryAdapter implements ImageManagerOutputPort {
     private static final String AUTO = "auto";
 
     @Override
-    public String uploadImage(MultipartFile multipart) throws IdentityManagerException {
-       IdentityValidator.isValidMultipartType(multipart);
+    public String uploadImage(String content) throws IdentityManagerException {
+//       IdentityValidator.isValidMultipartType(multipart);
+
+       MultipartFile multipart = new Base64MultipartFile(content);
 
 
         try {

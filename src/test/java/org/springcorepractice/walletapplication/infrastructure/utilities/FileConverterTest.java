@@ -14,6 +14,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Base64;
 
 import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
@@ -64,6 +66,22 @@ import static org.junit.jupiter.api.Assertions.*;
             exception.printStackTrace();
             throw new RuntimeException(exception);
         }
+    }
+
+    public static void main(String[] args) throws IdentityManagerException, IOException {
+            MultipartFile multipartFile = getFileTest(FILE_LOCATION);
+            String byteImage = ImageConverter.convertImageToBase64(multipartFile);
+            log.info("Multipath {}",byteImage);
+            String decode = Arrays.toString(Base64.getDecoder().decode(byteImage));
+             log.info("byte {}", decode);
+
+
+
+            String image = ImageConverter.encodeImageToBase64(FILE_LOCATION);
+
+
+            log.info("Image {}",image);
+
     }
 
 

@@ -4,5 +4,5 @@ import org.springcorepractice.walletapplication.domain.exceptions.IdentityManage
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ImageManagerOutputPort {
-    String uploadImage(MultipartFile content) throws IdentityManagerException;
+    String uploadImage(String content) throws IdentityManagerException;
 }

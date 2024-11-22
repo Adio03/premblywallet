@@ -27,6 +27,8 @@ public class UserEntity {
     private IdentityRole identityRole;
     private String createdAt;
     private String createdBy;
+    private String imageUrl;
+    private String nin;
     @DBRef
     private WalletEntity walletEntity;
 
