@@ -24,7 +24,7 @@ public class PremblyManagerAdapterTest {
     @BeforeEach
     void setUp(){
         premblyResponse = PremblyResponse.builder()
-                .verified(true)
+                .verificationCallSuccessful(true)
                 .detail("Verification successful")
                 .responseCode("200")
                 .endpointName("NIN Verification")
@@ -83,12 +83,13 @@ public class PremblyManagerAdapterTest {
                         .confidence("99.99")
                         .responseCode("200")
                         .build())
+                        .verification(PremblyResponse.Verification.builder()
+                        .status("verified")
+                        .reference("ref_123456")
+                        .build())
                 .session(ObjectUtils.NULL)
                 .build();
-        //                .verification(PremblyResponse.Verification.builder()
-//                        .status("verified")
-//                        .reference("ref_123456")
-//                        .build())
+
     }
 
     @Test

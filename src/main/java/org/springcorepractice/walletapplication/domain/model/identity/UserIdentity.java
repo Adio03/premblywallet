@@ -24,6 +24,7 @@ public class UserIdentity {
     private String createdBy;
     private String accessToken;
     private String refreshToken;
+    private String nin;
     private WalletIdentity walletIdentity;
 
 }

@@ -15,13 +15,24 @@ public class Base64MultipartFile implements MultipartFile {
 
 
     public Base64MultipartFile(String base64String) {
+        if (!base64String.contains(",")) {
+            throw new IllegalArgumentException("Invalid Base64 string format");
+        }
+
         String[] parts = base64String.split(",");
+
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Base64 string does not contain valid data");
+        }
         String base64Data = parts[1];
 
         this.content = Base64.getDecoder().decode(base64Data);
+
         this.name = "uploaded_image";
+
         this.contentType = determineContentType(parts[0]);
     }
+
 
     private String determineContentType(String prefix) {
         if (prefix.contains("jpeg")) {

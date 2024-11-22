@@ -35,12 +35,34 @@ public class PremblyAdapter implements IdentityVerificationManagerOutputPort {
 
     public PremblyResponse getNinDetails(IdentityVerification verificationRequest) throws IdentityManagerException {
         IdentityValidator.validateIdentityVerificationRequest(verificationRequest);
-        ResponseEntity<PremblyResponse> responseEntity = getIdentityDetailsByNin(verificationRequest);
-        log.info("Verification Result : {}", responseEntity.getBody());
-        return responseEntity.getBody();
+        PremblyResponse premblyResponse = getIdentityDetailsByNin(verificationRequest);
+        premblyResponse.getVerification().updateValidNin();
+        log.info("Verification Result : {}", premblyResponse);
+        return premblyResponse;
     }
 
-    private ResponseEntity<PremblyResponse> getIdentityDetailsByNin(IdentityVerification verificationRequest) {
+//    private ResponseEntity<PremblyResponse> getIdentityDetailsByNin(IdentityVerification verificationRequest) {
+//        RestTemplate restTemplate = new RestTemplate();
+//        HttpHeaders headers = getHttpHeaders();
+//        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+//        formData.add(PremblyParameter.NIN_NUMBER.getValue(), verificationRequest.getNin());
+//        formData.add(PremblyParameter.NIN_IMAGE.getValue(), verificationRequest.getImageUrl());
+//        log.info("Form Data... {}", formData);
+//        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(formData, headers);
+//        String url = premblyUrl.concat(PremblyParameter.NIN_FACE_URL.getValue());
+//        log.info(url);
+//        ResponseEntity<PremblyResponse> responseEntity = ResponseEntity.ofNullable(PremblyResponse.builder().build());
+//        log.info("Response ---> {}",responseEntity.getBody());
+//        try {
+//            responseEntity = restTemplate.exchange(url, HttpMethod.POST, entity, PremblyResponse.class);
+//        } catch (HttpServerErrorException ex) {
+//            log.info("Prembly server error {}", ex.getMessage());
+//            log.error("Prembly Server error {}", ex.getMessage());
+//        }
+//        return responseEntity;
+//    }
+
+    private PremblyResponse getIdentityDetailsByNin(IdentityVerification verificationRequest) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = getHttpHeaders();
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
@@ -58,7 +80,7 @@ public class PremblyAdapter implements IdentityVerificationManagerOutputPort {
             log.info("Prembly server error {}", ex.getMessage());
             log.error("Prembly Server error {}", ex.getMessage());
         }
-        return responseEntity;
+        return responseEntity.getBody();
     }
 
     private HttpHeaders getHttpHeaders() {

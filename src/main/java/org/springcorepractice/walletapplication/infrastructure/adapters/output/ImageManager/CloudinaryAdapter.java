@@ -27,6 +27,7 @@ public class CloudinaryAdapter implements ImageManagerOutputPort {
     public String uploadImage(MultipartFile multipart) throws IdentityManagerException {
        IdentityValidator.isValidMultipartType(multipart);
 
+
         try {
             Map<?, ?> uploadResponse = cloudinary.uploader().upload(multipart.getBytes(),
                     ObjectUtils.asMap(
