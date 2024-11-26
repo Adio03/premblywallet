@@ -8,6 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class IdentityVerification {
-    private String nin;
+    private String identityNumber;
     private String imageUrl;
 }

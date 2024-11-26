@@ -5,9 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
-import org.keycloak.broker.provider.IdentityBrokerException;
 import org.springcorepractice.walletapplication.domain.enums.constants.IdentityMessage;
+import org.springcorepractice.walletapplication.domain.enums.constants.TransactionMessage;
 import org.springcorepractice.walletapplication.domain.exceptions.IdentityManagerException;
+import org.springcorepractice.walletapplication.domain.exceptions.IdentityVerificationException;
+import org.springcorepractice.walletapplication.domain.exceptions.TransactionException;
 import org.springcorepractice.walletapplication.domain.model.identity.IdentityVerification;
 import org.springcorepractice.walletapplication.domain.model.identity.UserIdentity;
 import org.springcorepractice.walletapplication.domain.model.wallet.WalletIdentity;
@@ -140,11 +142,12 @@ public class IdentityValidator {
         return true;
     }
 
-    public static void validatePaystackInput(PaystackRequest paystackRequest) throws IdentityManagerException {
+    public static void validatePaystackInput(PaystackRequest paystackRequest) throws IdentityManagerException, TransactionException {
         if(paystackRequest == null){
-            throw new IdentityManagerException(IdentityMessage.EMPTY_INPUT_FIELD_ERROR.getMessage());
+            throw new TransactionException(TransactionMessage.EMPTY_INPUT_FIELD_ERROR.getMessage());
         }
         validateUserEmail(paystackRequest.getEmail());
+        validateTransactionAmount(paystackRequest.getAmount());
     }
 
     public static void validatePaystackReference(String reference) throws IdentityManagerException {
@@ -153,35 +156,42 @@ public class IdentityValidator {
         }
     }
 
-        public static void validateTransactionAmount(BigDecimal amount) throws IdentityManagerException {
+        public static void validateTransactionAmount(BigDecimal amount) throws TransactionException {
             if (amount == null) {
-                throw new IdentityManagerException(IdentityMessage.AMOUNT_CAN_NOT_BE_NULL.getMessage());
+                throw new TransactionException(TransactionMessage.AMOUNT_CAN_NOT_BE_NULL.getMessage());
             }
 
             String amountString = amount.toString().trim();
 
             if (amountString.isEmpty()) {
-                throw new IdentityManagerException(IdentityMessage.AMOUNT_CAN_NOT_EMPTY.getMessage());
+                throw new TransactionException(TransactionMessage.AMOUNT_CAN_NOT_EMPTY.getMessage());
             }
 
             BigDecimal trimmedAmount = new BigDecimal(amountString);
 
             if (trimmedAmount.compareTo(BigDecimal.ZERO) < 0) {
-                throw new IdentityManagerException(IdentityMessage.AMOUNT_CAN_NOT_BE_ZERO.getMessage());
+                throw new TransactionException(TransactionMessage.AMOUNT_CAN_NOT_BE_ZERO.getMessage());
             }
             if (trimmedAmount.compareTo(BigDecimal.ZERO) == 0) {
-                throw new IdentityManagerException(IdentityMessage.AMOUNT_CAN_NOT_BE_ZERO.getMessage());
+                throw new TransactionException(TransactionMessage.AMOUNT_CAN_NOT_BE_ZERO.getMessage());
             }
         }
 
-       public static void validateIdentityVerificationRequest(IdentityVerification identityVerification) throws  IdentityManagerException {
+       public static void validateIdentityVerificationRequest(IdentityVerification identityVerification) throws IdentityVerificationException {
         if(identityVerification == null){
-            throw new IdentityManagerException("credentials should not be empty");
+            throw new IdentityVerificationException(IdentityMessage.IDENTITY_SHOULD_NOT_BE_NULL.getMessage());
         }
-        validateDataElement(identityVerification.getNin());
-        validateDataElement(identityVerification.getImageUrl());
+           validateIdentity(identityVerification.getIdentityNumber());
+           validateIdentity(identityVerification.getImageUrl());
 
         }
+    public static void validateIdentity(String dataElement) throws IdentityVerificationException {
+        String trimmedDataElement = dataElement != null ? dataElement.trim() : StringUtils.EMPTY;
+        if (isEmptyString(trimmedDataElement)) {
+            throw new IdentityVerificationException(IdentityMessage.EMPTY_INPUT_FIELD_ERROR.getMessage());
+        }
+        }
+
     public static void validateWalletIdentity(WalletIdentity walletIdentity) throws IdentityManagerException {
         if(walletIdentity == null){
             throw new IdentityManagerException(IdentityMessage.WALLET_NOT_FOUND.getMessage());

@@ -18,6 +18,7 @@ public class PremblyManagerAdapter implements IdentityVerificationOutputPort {
     public PremblyNinResponse save(PremblyResponse premblyResponse) {
         PremblyResponseEntity premblyResponseEntity = premblyMapper.mapPremblyResponseEntityToPremblyResponse(premblyResponse);
         PremblyResponseEntity saveEntity = premblyEntityRepository.save(premblyResponseEntity);
-        return premblyMapper.mapPremblyResponse(saveEntity);
+//        return premblyMapper.mapPremblyResponse(saveEntity);
+        return null;
     }
 }

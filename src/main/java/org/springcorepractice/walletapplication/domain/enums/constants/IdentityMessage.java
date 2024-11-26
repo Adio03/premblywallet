@@ -25,7 +25,8 @@ public enum IdentityMessage {
     CONTEXT_FIRST_NAME("firstName"),
     CONTEXT_CURRENT_YEAR("currentYear"),
     ENCODING_VALUE("utf-8"),
-    WALLET_ALREADY_EXIST("wallet already exist");
+    WALLET_ALREADY_EXIST("wallet already exist"),
+    IDENTITY_SHOULD_NOT_BE_NULL("IdentityVerification should not be empty");
 
     private final String message;
 
