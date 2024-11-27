@@ -2,11 +2,11 @@ package org.springcorepractice.walletapplication.infrastructure.adapters.input.r
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@SuperBuilder
 public class PremblyLivelinessResponse extends PremblyResponse{
     @JsonProperty("status")
     private boolean status;
