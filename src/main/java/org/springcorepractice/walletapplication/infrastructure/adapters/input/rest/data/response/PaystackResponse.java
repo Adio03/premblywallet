@@ -16,6 +16,7 @@ public class PaystackResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     @lombok.ToString
+
     public static class PaystackResponses{
         private String authorization_url;
         private String access_code;

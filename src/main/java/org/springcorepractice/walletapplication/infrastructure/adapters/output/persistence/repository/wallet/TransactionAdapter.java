@@ -3,6 +3,7 @@ package org.springcorepractice.walletapplication.infrastructure.adapters.output.
 import lombok.RequiredArgsConstructor;
 import org.springcorepractice.walletapplication.application.output.wallet.TransactionOutputPort;
 import org.springcorepractice.walletapplication.domain.exceptions.IdentityManagerException;
+import org.springcorepractice.walletapplication.domain.exceptions.TransactionException;
 import org.springcorepractice.walletapplication.domain.model.wallet.TransactionIdentity;
 import org.springcorepractice.walletapplication.domain.validator.IdentityValidator;
 import org.springcorepractice.walletapplication.infrastructure.adapters.output.persistence.entity.TransactionEntity;
@@ -18,7 +19,7 @@ public class TransactionAdapter implements TransactionOutputPort {
     private final TransactionMapper transactionMapper;
 
     @Override
-    public TransactionIdentity save(TransactionIdentity transactionIdentity) throws IdentityManagerException {
+    public TransactionIdentity save(TransactionIdentity transactionIdentity) throws IdentityManagerException, TransactionException {
         IdentityValidator.validateTransactionAmount(transactionIdentity.getAmount());
         IdentityValidator.validateDataElement(transactionIdentity.getWalletId());
         TransactionEntity transactionEntity = transactionMapper.mapToTransactionEntity(transactionIdentity);
@@ -30,6 +31,13 @@ public class TransactionAdapter implements TransactionOutputPort {
     public TransactionIdentity findByReference(String reference) throws IdentityManagerException {
         TransactionEntity transactionEntity = transactionRepository.
                 findByPaystackReference(reference).orElseThrow(()-> new IdentityManagerException("Transaction not found"));
+        return transactionMapper.mapToTransactionIdentity(transactionEntity);
+    }
+
+    @Override
+    public TransactionIdentity findTransactionById(String id) throws IdentityManagerException {
+        TransactionEntity transactionEntity =
+                transactionRepository.findById(id).orElseThrow(()-> new IdentityManagerException("Transaction not found"));
         return transactionMapper.mapToTransactionIdentity(transactionEntity);
     }
 

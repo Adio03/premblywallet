@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springcorepractice.walletapplication.application.output.paymentmanager.PaymentPayManagerOutPutPort;
 import org.springcorepractice.walletapplication.domain.exceptions.IdentityManagerException;
+import org.springcorepractice.walletapplication.domain.exceptions.TransactionException;
 import org.springcorepractice.walletapplication.domain.validator.IdentityValidator;
 import org.springcorepractice.walletapplication.infrastructure.adapters.config.PaystackConfiguration;
 import org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.request.PaystackRequest;
@@ -28,7 +29,7 @@ public class PaystackAdapter implements PaymentPayManagerOutPutPort {
 
 
     @Override
-    public PaystackResponse initialisePayment(PaystackRequest paystackRequest) throws IdentityManagerException {
+    public PaystackResponse initialisePayment(PaystackRequest paystackRequest) throws IdentityManagerException, TransactionException {
         IdentityValidator.validatePaystackInput(paystackRequest);
         String URL = paystackConfiguration.getPayInitialise_url();
         HttpHeaders httpHeaders = getHttpHeaders();

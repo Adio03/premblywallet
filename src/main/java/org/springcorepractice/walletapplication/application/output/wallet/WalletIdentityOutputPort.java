@@ -1,6 +1,7 @@
 package org.springcorepractice.walletapplication.application.output.wallet;
 
 import org.springcorepractice.walletapplication.domain.exceptions.IdentityManagerException;
+import org.springcorepractice.walletapplication.domain.model.identity.UserIdentity;
 import org.springcorepractice.walletapplication.domain.model.wallet.WalletIdentity;
 import org.springcorepractice.walletapplication.infrastructure.adapters.output.persistence.entity.WalletEntity;
 
@@ -15,4 +16,5 @@ public interface WalletIdentityOutputPort {
     WalletIdentity findById(String id) throws IdentityManagerException;
 
     void deleteUser(WalletIdentity wallet) throws IdentityManagerException;
+
 }

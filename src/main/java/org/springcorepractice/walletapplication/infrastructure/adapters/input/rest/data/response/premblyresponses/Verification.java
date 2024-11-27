@@ -13,13 +13,14 @@ public  class Verification {
 
     @JsonProperty("status")
     private String status;
-    private boolean validNin;
+    private boolean validIdentity;
     @JsonProperty("reference")
     private String reference;
 
-    public void updateValidNin() {
+    public void updateValidIdentity() {
         if (StringUtils.equalsIgnoreCase("VERIFIED", this.status)) {
-            validNin = Boolean.TRUE;
+            validIdentity = Boolean.TRUE;
         }
     }
-}
+
+    }

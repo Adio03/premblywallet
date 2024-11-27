@@ -9,7 +9,9 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.springcorepractice.walletapplication.application.output.paymentmanager.PaymentPayManagerOutPutPort;
+import org.springcorepractice.walletapplication.domain.enums.constants.TransactionMessage;
 import org.springcorepractice.walletapplication.domain.exceptions.IdentityManagerException;
+import org.springcorepractice.walletapplication.domain.exceptions.TransactionException;
 import org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.request.PaystackRequest;
 import org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.response.PaystackResponse;
 import org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.response.PaystackVerificationResponse;
@@ -39,7 +41,7 @@ class PaystackAdapterTest {
     }
 
     @Test
-    void initializePayment() throws IdentityManagerException {
+    void initializePayment() throws IdentityManagerException, TransactionException {
 
             PaystackResponse paystackResponse = paymentPayManagerOutPutPort.initialisePayment(paystackRequest);
             log.info("RESPONSE---> {}", paystackResponse);
@@ -59,7 +61,7 @@ class PaystackAdapterTest {
             "email@gmail.com  ",
             "  email@gmail.com  "
     })
-    void initializePaymentEmailValidation(String email) throws IdentityManagerException {
+    void initializePaymentEmailValidation(String email) throws IdentityManagerException, TransactionException {
         paystackRequest.setEmail(email);
         doThrow(new IdentityManagerException("Invalid email format"))
                 .when(paystackAdapter).initialisePayment(paystackRequest);
@@ -71,7 +73,7 @@ class PaystackAdapterTest {
     @Test
     void verifyPayment() throws IdentityManagerException {
 
-        String reference = "9gw4jnjo01";
+        String reference = "ii9bpgjx13";
         PaystackVerificationResponse paystackVerificationResponse = paymentPayManagerOutPutPort.verifyPayment(reference);
         assertNotNull(paystackVerificationResponse);
         log.info("OverAll {}", paystackVerificationResponse);
@@ -85,6 +87,17 @@ class PaystackAdapterTest {
 
 
     }
+    @ParameterizedTest
+    @ValueSource(strings = {"-1.0", "-0.01"})
+    void validAmount(String amount) throws IdentityManagerException, TransactionException {
+        paystackRequest.setAmount(new BigDecimal(amount));
+        doThrow(new TransactionException(TransactionMessage.AMOUNT_CAN_NOT_BE_ZERO.getMessage())).
+                when(paystackAdapter).initialisePayment(paystackRequest);
+        TransactionException exception =
+                assertThrows(TransactionException.class,()-> paystackAdapter.initialisePayment(paystackRequest));
+        assertEquals(TransactionMessage.AMOUNT_CAN_NOT_BE_ZERO.getMessage(),exception.getMessage());
+    }
+
 
     @ParameterizedTest
     @NullSource

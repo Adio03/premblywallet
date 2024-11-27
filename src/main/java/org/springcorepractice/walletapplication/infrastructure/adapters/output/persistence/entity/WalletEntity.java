@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Setter
@@ -22,6 +23,7 @@ public class WalletEntity {
     private String updatedAt;
     private boolean isWalletActive;
     private String userId;
+    @Builder.Default
     @DBRef
-    private List<TransactionEntity> transactionEntity;
+    private List<TransactionEntity> transactionEntity = new ArrayList<>();
 }

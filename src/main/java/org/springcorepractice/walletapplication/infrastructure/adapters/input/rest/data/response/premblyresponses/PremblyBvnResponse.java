@@ -2,30 +2,16 @@ package org.springcorepractice.walletapplication.infrastructure.adapters.input.r
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 
-@Builder
+@SuperBuilder
 @Getter
 @Setter
 public class PremblyBvnResponse extends PremblyResponse{
 
-    @JsonProperty("status")
-    private boolean verificationCallSuccessful;
-
-    @JsonProperty("detail")
-    private String detail;
-
-    @JsonProperty("response_code")
-    private String responseCode;
-
     @JsonProperty("data")
     private BvnData data;
-
-    @JsonProperty("verification")
-    private Verification verification;
-
-    @JsonProperty("session")
-    private Object session;
 
     @lombok.Data
     @Builder

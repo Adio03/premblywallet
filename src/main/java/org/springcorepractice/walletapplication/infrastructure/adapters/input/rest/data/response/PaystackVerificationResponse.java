@@ -13,6 +13,7 @@ public class PaystackVerificationResponse {
     private String message;
     private PaystackData data;
 
+
     @Getter
     @Setter
     @AllArgsConstructor

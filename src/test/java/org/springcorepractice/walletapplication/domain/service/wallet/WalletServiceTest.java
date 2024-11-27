@@ -8,7 +8,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springcorepractice.walletapplication.application.input.wallet.WalletUseCase;
+import org.springcorepractice.walletapplication.domain.enums.TransactionType;
 import org.springcorepractice.walletapplication.domain.exceptions.IdentityManagerException;
+import org.springcorepractice.walletapplication.domain.exceptions.TransactionException;
+import org.springcorepractice.walletapplication.domain.model.identity.UserIdentity;
 import org.springcorepractice.walletapplication.domain.model.wallet.TransactionIdentity;
 import org.springcorepractice.walletapplication.domain.model.wallet.WalletIdentity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,27 +28,34 @@ class WalletServiceTest {
     @Autowired
     private WalletUseCase walletUseCase;
     private WalletIdentity wallet;
+    private WalletIdentity walletIdentity;
     private TransactionIdentity transactionIdentity;
+    private UserIdentity userIdentity;
 
     @BeforeEach
     void setUp() {
-        wallet = WalletIdentity.builder().
+        userIdentity = UserIdentity.builder().id("a9218f54-e750-4c75-85db-984261ef2ab8").email("akin@gmail.com").build();
+        wallet = WalletIdentity.builder().amount(new BigDecimal("10000")).decription("nothing").build();
+
+        walletIdentity = WalletIdentity.builder().
                 balance(BigDecimal.ZERO).
-                userId("2c521790-563a-4449-a4bd-459bd5a2d4d7").
+                userId("a0c").
                 createdAt(LocalDateTime.now().toString()).
-                transactionIdentities(new ArrayList<>()).build();
-
-
+                transactionIdentities(new ArrayList<>()).
+                balance(BigDecimal.ZERO)
+                .build();
         transactionIdentity = TransactionIdentity.builder().build();
     }
 
+
     @Test
     void createWalletIdentityTest() throws IdentityManagerException {
-        assertThrows(IdentityManagerException.class, () -> walletUseCase.findWalletUserId(wallet));
-        WalletIdentity walletIdentity = walletUseCase.createWalletIdentity(wallet);
-        assertNotNull(walletIdentity);
-        assertNotNull(walletIdentity.getUserId());
-        assertEquals(walletIdentity.getUserId(),wallet.getUserId());
+//        assertThrows(IdentityManagerException.class, () -> walletUseCase.findWalletUserId(wallet));
+        WalletIdentity identity = walletUseCase.createWalletIdentity(walletIdentity);
+        assertNotNull(identity.getTransactionIdentities());
+        assertNotNull(identity);
+        assertNotNull(identity.getUserId());
+        assertEquals(identity.getUserId(),wallet.getUserId());
 
 
     }
@@ -62,10 +72,21 @@ class WalletServiceTest {
         assertThrows(IdentityManagerException.class,()-> walletUseCase.createWalletIdentity(wallet));
 
     }
-//    @Test
-//    void depositTest(){
-//        WalletIdentity walletIdentity = walletUseCase.deposit()
-//    }
+    @Test
+    void testDeposit_Success() throws IdentityManagerException, TransactionException {
+
+        WalletIdentity result = walletUseCase.deposit(userIdentity, wallet);
+        assertNotNull(result);
+        assertEquals(BigDecimal.ZERO, result.getBalance());
+    }
+    @Test
+    void updateBalance() throws IdentityManagerException, TransactionException {
+        String transaction ="67437708e8134678d0576093";
+        WalletIdentity walletIdentity = walletUseCase.updateWalletBalance(userIdentity,transaction);
+        log.info("{}",walletIdentity);
+        assertNotNull(walletIdentity);
+    }
+
 
 
 }

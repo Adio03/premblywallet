@@ -4,6 +4,7 @@ import lombok.*;
 import org.springcorepractice.walletapplication.infrastructure.adapters.output.persistence.entity.TransactionEntity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Setter
@@ -19,6 +20,8 @@ public class WalletIdentity {
     private String updatedAt;
     private boolean isWalletActive;
     private String userId;
-    private List<TransactionIdentity> transactionIdentities;
+    private BigDecimal amount;
+    private String decription;
+    private List<TransactionIdentity> transactionIdentities = new ArrayList<>();
 }
 

@@ -11,5 +11,6 @@ public interface IdentityVerificationManagerOutputPort {
 
     PremblyResponse verifyLiveliness(IdentityVerification identityVerification);
 
-    PremblyResponse verifyBvn(IdentityVerification identityVerification) throws IdentityManagerException, IdentityVerificationException;
+    PremblyResponse verifyBvnLikeness(IdentityVerification identityVerification) throws IdentityManagerException, IdentityVerificationException;
+    PremblyResponse verifyNinLikeness(IdentityVerification identityVerification) throws IdentityManagerException, IdentityVerificationException;
 }

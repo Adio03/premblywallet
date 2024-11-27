@@ -2,8 +2,10 @@ package org.springcorepractice.walletapplication.infrastructure.adapters.input.r
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
+@SuperBuilder
 public abstract class PremblyResponse {
     @JsonProperty("status")
     private boolean verificationCallSuccessful;
@@ -19,5 +21,11 @@ public abstract class PremblyResponse {
 
     @JsonProperty("session")
     private Object session;
+
+    @JsonProperty("widget_info")
+    private Object wiget;
+
+    @JsonProperty("endpoint_name")
+    private String endpointName;
 
 }

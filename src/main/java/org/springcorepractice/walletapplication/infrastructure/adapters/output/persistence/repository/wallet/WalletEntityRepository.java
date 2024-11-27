@@ -10,5 +10,6 @@ public interface WalletEntityRepository extends MongoRepository<WalletEntity, St
     Optional<WalletEntity> findByuserId(String userId);
 
 
+
 }
 

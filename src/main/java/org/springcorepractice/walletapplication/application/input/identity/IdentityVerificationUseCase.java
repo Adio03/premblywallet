@@ -4,7 +4,6 @@ import org.springcorepractice.walletapplication.domain.model.identity.IdentityVe
 import org.springcorepractice.walletapplication.infrastructure.adapters.input.rest.data.response.premblyresponses.PremblyResponse;
 
 public interface IdentityVerificationUseCase {
-    PremblyResponse verifyNinIdentity(IdentityVerification identityVerification);
-    PremblyResponse verifyBvnIdentity(IdentityVerification identityVerification);
-    PremblyResponse verifyLiveliness();
+    PremblyResponse verifyIdentity(IdentityVerification identityVerification);
+
 }

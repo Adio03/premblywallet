@@ -181,7 +181,7 @@ public class IdentityValidator {
         if(identityVerification == null){
             throw new IdentityVerificationException(IdentityMessage.IDENTITY_SHOULD_NOT_BE_NULL.getMessage());
         }
-           validateIdentity(identityVerification.getIdentityNumber());
+           validateIdentity(identityVerification.getNin());
            validateIdentity(identityVerification.getImageUrl());
 
         }

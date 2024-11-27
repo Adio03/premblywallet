@@ -47,6 +47,7 @@ public class WalletIdentityAdapterTest {
     void saveWallet() throws IdentityManagerException {
         WalletIdentity graceWallet = createWallet();
         assertNotNull(graceWallet);
+        assertNotNull(graceWallet.getTransactionIdentities());
         assertNotNull(graceWallet.getUserId());
         log.info("Wallet Entity ----> {}", wallet);
 
@@ -102,7 +103,7 @@ public class WalletIdentityAdapterTest {
     }
 
 
-    @AfterEach
+//    @AfterEach
     void tearDown(){
         log.info("Cleaning up...");
         try {

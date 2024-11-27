@@ -30,6 +30,7 @@ public class PremblyAdapterTest {
     private IdentityVerificationManagerOutputPort identityVerificationManagerOutputPort;
     private IdentityVerification identityVerification;
     private IdentityVerification bvnIdentityVerification;
+    private IdentityVerification ninIdentityVerification;
     private IdentityVerification livelinessVerification;
     @Mock
     private PremblyAdapter premblyAdapter;
@@ -37,14 +38,16 @@ public class PremblyAdapterTest {
 
     @BeforeEach
     void setUp() {
-        bvnIdentityVerification = IdentityVerification.builder().identityNumber("1234567890").
+        bvnIdentityVerification = IdentityVerification.builder().nin("1234567890").
                 imageUrl("https://res.cloudinary.com/drhrd1xkn/image/upload/v1732027769/.jpg").build();
 
-        identityVerification = IdentityVerification.builder().identityNumber("12345678903").
+        identityVerification = IdentityVerification.builder().nin("12345678903").
                 imageUrl("https://res.cloudinary.com/drhrd1xkn/image/upload/v1732027769/.jpg").build();
 
         livelinessVerification = IdentityVerification.builder().
                 imageUrl("https://res.cloudinary.com/drhrd1xkn/image/upload/v1732027769/.jpg").build();
+
+        ninIdentityVerification = IdentityVerification.builder().nin("1234567890").build();
 
 
 
@@ -52,7 +55,7 @@ public class PremblyAdapterTest {
 
     @Test
     void verifyIdentityWithValidNinAndValidImage() throws IdentityManagerException, IdentityVerificationException {
-        PremblyNinResponse response = (PremblyNinResponse) identityVerificationManagerOutputPort.verifyIdentity(identityVerification);
+        PremblyNinResponse response = (PremblyNinResponse) identityVerificationManagerOutputPort.verifyNinLikeness(identityVerification);
         log.info("Response {}",response);
         assertNotNull(response);
         assertEquals(PremblyResponseCode.SUCCESSFUL.getCode(), response.getResponseCode());
@@ -60,7 +63,7 @@ public class PremblyAdapterTest {
         assertEquals(PremblyResponseCode.SUCCESSFUL.getCode(), response.getFaceData().getResponseCode());
         assertTrue(response.getFaceData().isFaceVerified());
         assertTrue(response.getVerification().isValidIdentity());
-        assertEquals(identityVerification.getIdentityNumber(), response.getNinData().getNin());
+        assertEquals(identityVerification.getNin(), response.getNinData().getNin());
     }
 
     @Test
@@ -78,8 +81,8 @@ public class PremblyAdapterTest {
 
     @Test
     void verifyIdentityWithInvalidNin() throws IdentityManagerException, IdentityVerificationException {
-        identityVerification.setIdentityNumber("12345678901");
-        PremblyNinResponse response = (PremblyNinResponse) identityVerificationManagerOutputPort.verifyIdentity(identityVerification);
+        identityVerification.setNin("12345678901");
+        PremblyNinResponse response = (PremblyNinResponse) identityVerificationManagerOutputPort.verifyNinLikeness(identityVerification);
         log.info("......{}", response);
         assertNotNull(response);
         assertTrue(response.isVerificationCallSuccessful());
@@ -90,7 +93,7 @@ public class PremblyAdapterTest {
     @Test
     void verifyIdentityWhenImageIsNotPosition() throws IdentityManagerException, IdentityVerificationException {
         identityVerification.setImageUrl("https://res.cloudinary.com/drhrd1xkn/image/upload/v1732027712/ez15xfsdj3whhd5kwscs.jpg");
-        PremblyNinResponse response = (PremblyNinResponse) identityVerificationManagerOutputPort.verifyIdentity(identityVerification);
+        PremblyNinResponse response = (PremblyNinResponse) identityVerificationManagerOutputPort.verifyNinLikeness(identityVerification);
         assertNotNull(response);
         assertTrue(response.isVerificationCallSuccessful());
         assertFalse(response.getFaceData().isFaceVerified());
@@ -105,10 +108,10 @@ public class PremblyAdapterTest {
                 .verificationCallSuccessful(false)
                 .build();
 
-        when(premblyAdapter.verifyIdentity(identityVerification))
+        when(premblyAdapter.verifyNinLikeness(identityVerification))
                 .thenReturn(insufficientBalanceResponse);
 
-        PremblyNinResponse response = (PremblyNinResponse) premblyAdapter.verifyIdentity(identityVerification);
+        PremblyNinResponse response = (PremblyNinResponse) premblyAdapter.verifyNinLikeness(identityVerification);
         assertNotNull(response);
         assertEquals(PremblyResponseCode.INSUFFICIENT_WALLET_BALANCE.getCode(), response.getResponseCode());
         assertFalse(response.isVerificationCallSuccessful());
@@ -128,7 +131,7 @@ public class PremblyAdapterTest {
     void verifyIdentityWithNullIdentityVerification() throws IdentityManagerException {
         IdentityVerificationException exception = assertThrows(
                 IdentityVerificationException.class,
-                () -> identityVerificationManagerOutputPort.verifyIdentity(null)
+                () -> identityVerificationManagerOutputPort.verifyNinLikeness(null)
         );
         assertEquals(IdentityMessage.IDENTITY_SHOULD_NOT_BE_NULL.getMessage(), exception.getMessage());
 
@@ -138,9 +141,9 @@ public class PremblyAdapterTest {
     @NullSource
     @ValueSource(strings = {StringUtils.EMPTY, StringUtils.SPACE})
     void verifyIdentityWithEmptyIdentityId(String nin) throws IdentityManagerException {
-        identityVerification.setIdentityNumber(nin);
+        identityVerification.setNin(nin);
         IdentityManagerException exception =
-                assertThrows(IdentityManagerException.class, () -> identityVerificationManagerOutputPort.verifyIdentity(identityVerification));
+                assertThrows(IdentityManagerException.class, () -> identityVerificationManagerOutputPort.verifyNinLikeness(identityVerification));
         assertEquals(IdentityMessage.EMPTY_INPUT_FIELD_ERROR.getMessage(),exception.getMessage());
     }
 
@@ -150,13 +153,13 @@ public class PremblyAdapterTest {
     void verifyIdentityWithNullIdentityImage(String url) throws IdentityManagerException {
         identityVerification.setImageUrl(url);
         IdentityManagerException exception =
-                assertThrows(IdentityManagerException.class, () -> identityVerificationManagerOutputPort.verifyIdentity(identityVerification));
+                assertThrows(IdentityManagerException.class, () -> identityVerificationManagerOutputPort.verifyNinLikeness(identityVerification));
         assertEquals(IdentityMessage.EMPTY_INPUT_FIELD_ERROR.getMessage(),exception.getMessage());
 
     }
 //    @Test
     void verifyIdentityWithValidBvnAndValidImage() throws IdentityManagerException, IdentityVerificationException {
-        PremblyBvnResponse response = (PremblyBvnResponse) identityVerificationManagerOutputPort.verifyBvn(bvnIdentityVerification);
+        PremblyBvnResponse response = (PremblyBvnResponse) identityVerificationManagerOutputPort.verifyBvnLikeness(bvnIdentityVerification);
         log.info("Prembly {}",response);
         assertNotNull(response);
         assertEquals(PremblyResponseCode.SUCCESSFUL.getCode(), response.getResponseCode());
@@ -164,23 +167,23 @@ public class PremblyAdapterTest {
         assertEquals(PremblyResponseCode.SUCCESSFUL.getCode(), response.getData().getFaceData().getResponseCode());
         assertTrue(response.getData().getFaceData().isFaceVerified());
         assertTrue(response.getVerification().isValidIdentity());
-        assertEquals(bvnIdentityVerification.getIdentityNumber(), response.getData().getBvn());
+        assertEquals(bvnIdentityVerification.getNin(), response.getData().getBvn());
     }
         @Test
         void verifyIdentityWithValidBvnAndValidImageTest() throws IdentityManagerException, IdentityVerificationException {
-            PremblyBvnResponse response = (PremblyBvnResponse) identityVerificationManagerOutputPort.verifyBvn(bvnIdentityVerification);
+            PremblyBvnResponse response = (PremblyBvnResponse) identityVerificationManagerOutputPort.verifyBvnLikeness(bvnIdentityVerification);
             assertNotNull(response);
             assertEquals(PremblyResponseCode.SUCCESSFUL.getCode(), response.getResponseCode());
             assertTrue(response.isVerificationCallSuccessful());
             assertEquals(PremblyResponseCode.SUCCESSFUL.getCode(), response.getData().getFaceData().getResponseCode());
             assertTrue(response.getData().getFaceData().isFaceVerified());
             assertTrue(response.getVerification().isValidIdentity());
-            assertEquals(bvnIdentityVerification.getIdentityNumber(), response.getData().getBvn());
+            assertEquals(bvnIdentityVerification.getNin(), response.getData().getBvn());
         }
     @Test
     void verifyIdentityWithValidBvnAndImageThatDoesNotMatch() throws IdentityManagerException, IdentityVerificationException {
         bvnIdentityVerification.setImageUrl("https://res.cloudinary.com/drhrd1xkn/image/upload/v1732042468/gi2ppo8hsivajcn74idz.jpg");
-        PremblyBvnResponse response = (PremblyBvnResponse) identityVerificationManagerOutputPort.verifyBvn(bvnIdentityVerification);
+        PremblyBvnResponse response = (PremblyBvnResponse) identityVerificationManagerOutputPort.verifyBvnLikeness(bvnIdentityVerification);
         assertNotNull(response);
         assertEquals(PremblyResponseCode.SUCCESSFUL_RECORD_NOT_FOUND.getCode(), response.getData().getFaceData().getResponseCode());
         assertTrue(response.isVerificationCallSuccessful());
@@ -190,18 +193,18 @@ public class PremblyAdapterTest {
     }
     @Test
     void verifyIdentityWithInvalidBvn() throws IdentityManagerException, IdentityVerificationException {
-        bvnIdentityVerification.setIdentityNumber("12345678901");
-        PremblyResponse response = identityVerificationManagerOutputPort.verifyBvn(bvnIdentityVerification);
+        bvnIdentityVerification.setNin("12345678901");
+        PremblyResponse response = identityVerificationManagerOutputPort.verifyBvnLikeness(bvnIdentityVerification);
         log.info("{}", response);
         assertNotNull(response);
         assertTrue(response.isVerificationCallSuccessful());
         assertEquals(PremblyResponseCode.SUCCESSFUL_RECORD_NOT_FOUND.getCode(), response.getResponseCode());
     }
     @Test
-    void verifyBvnIdentityWithNullIdentityVerification() throws IdentityManagerException {
+    void verifyBvnLikenessIdentityWithNullIdentityVerification() throws IdentityManagerException {
         IdentityVerificationException exception = assertThrows(
                 IdentityVerificationException.class,
-                () -> identityVerificationManagerOutputPort.verifyBvn(null)
+                () -> identityVerificationManagerOutputPort.verifyBvnLikeness(null)
         );
         assertEquals(IdentityMessage.IDENTITY_SHOULD_NOT_BE_NULL.getMessage(), exception.getMessage());
 
@@ -211,24 +214,24 @@ public class PremblyAdapterTest {
     @NullSource
     @ValueSource(strings = {StringUtils.EMPTY, StringUtils.SPACE})
     void verifyIdentityWithEmptyIdentityNumber(String bvn) {
-        bvnIdentityVerification.setIdentityNumber(bvn);
+        bvnIdentityVerification.setNin(bvn);
         IdentityVerificationException  exception =
-                assertThrows(IdentityVerificationException.class, () -> identityVerificationManagerOutputPort.verifyBvn(bvnIdentityVerification));
+                assertThrows(IdentityVerificationException.class, () -> identityVerificationManagerOutputPort.verifyBvnLikeness(bvnIdentityVerification));
         assertEquals(IdentityMessage.EMPTY_INPUT_FIELD_ERROR.getMessage(),exception.getMessage());
     }
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = {StringUtils.EMPTY, StringUtils.SPACE})
-    void verifyBvnIdentityWithNullIdentityImage(String url) {
+    void verifyBvnLikenessIdentityWithNullIdentityImage(String url) {
         bvnIdentityVerification.setImageUrl(url);
         IdentityVerificationException exception =
-                assertThrows(IdentityVerificationException.class, () -> identityVerificationManagerOutputPort.verifyBvn(bvnIdentityVerification));
+                assertThrows(IdentityVerificationException.class, () -> identityVerificationManagerOutputPort.verifyBvnLikeness(bvnIdentityVerification));
         assertEquals(IdentityMessage.EMPTY_INPUT_FIELD_ERROR.getMessage(),exception.getMessage());
 
     }
 
     @Test
-    void verifyBvnIdentityWhenBalanceIsInsufficient() throws IdentityVerificationException {
+    void verifyBvnLikenessIdentityWhenBalanceIsInsufficient() throws IdentityVerificationException {
         PremblyBvnResponse insufficientBalanceResponse = PremblyBvnResponse.builder()
                 .responseCode(PremblyResponseCode.INSUFFICIENT_WALLET_BALANCE.getCode())
                 .verificationCallSuccessful(false)
@@ -237,14 +240,21 @@ public class PremblyAdapterTest {
         when(premblyAdapter.verifyBvn(bvnIdentityVerification))
                 .thenReturn(insufficientBalanceResponse);
 
-        PremblyResponse response =premblyAdapter.verifyBvn(bvnIdentityVerification);
+        PremblyResponse response =premblyAdapter.verifyBvnLikeness(bvnIdentityVerification);
         assertNotNull(response);
         assertEquals(PremblyResponseCode.INSUFFICIENT_WALLET_BALANCE.getCode(), response.getResponseCode());
         assertFalse(response.isVerificationCallSuccessful());
 
-        verify(premblyAdapter, times(1)).verifyBvn(bvnIdentityVerification);
+        verify(premblyAdapter, times(1)).verifyBvnLikeness(bvnIdentityVerification);
     }
-
+    @Test
+    void verifyNinIdentity() throws IdentityManagerException, IdentityVerificationException {
+        PremblyNinResponse response = (PremblyNinResponse) identityVerificationManagerOutputPort.verifyIdentity(ninIdentityVerification);
+        assertNotNull(response);
+        assertTrue(response.isVerificationCallSuccessful());
+        assertEquals(PremblyResponseCode.SUCCESSFUL.getCode(),response.getResponseCode());
+        assertEquals(response.getNinData().getNin(),ninIdentityVerification.getNin());
+    }
 
 }
 

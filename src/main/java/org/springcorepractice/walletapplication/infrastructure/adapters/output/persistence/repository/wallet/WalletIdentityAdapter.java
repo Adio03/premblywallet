@@ -22,10 +22,6 @@ public class WalletIdentityAdapter implements WalletIdentityOutputPort {
     @Override
     public WalletIdentity save(WalletIdentity walletIdentity) throws IdentityManagerException {
         IdentityValidator.validateDataElement(walletIdentity.getUserId());
-        boolean foundWallet = walletEntityRepository.findByuserId(walletIdentity.getUserId()).isPresent();
-        if(foundWallet){
-            throw new IdentityManagerException(IdentityMessage.WALLET_ALREADY_EXIST.getMessage());
-        }
         WalletEntity savedWalletEntity = walletIdentityMapper.mapToWalletEntity(walletIdentity);
         savedWalletEntity.setWalletActive(Boolean.TRUE);
         savedWalletEntity = walletEntityRepository.save(savedWalletEntity);
@@ -39,6 +35,7 @@ public class WalletIdentityAdapter implements WalletIdentityOutputPort {
                 findByuserId(userId).orElseThrow(() -> new IdentityManagerException(IdentityMessage.WALLET_NOT_FOUND.getMessage()));
         return walletIdentityMapper.mapToWalletIdentity(walletEntity);
     }
+
     @Override
     public Optional<WalletIdentity> getWalletByUserId(String userId) throws IdentityManagerException {
         IdentityValidator.validateDataElement(userId);
@@ -62,5 +59,7 @@ public class WalletIdentityAdapter implements WalletIdentityOutputPort {
                 orElseThrow(()-> new IdentityManagerException(IdentityMessage.WALLET_NOT_FOUND.getMessage()));
         walletEntityRepository.delete(walletEntity);
     }
+
+
 
 }

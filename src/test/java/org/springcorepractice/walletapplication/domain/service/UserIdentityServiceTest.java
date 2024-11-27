@@ -27,8 +27,6 @@ class UserIdentityServiceTest {
 
     @BeforeEach
     void setUp(){
-
-
         userIdentity = UserIdentity.builder().
                 firstName("Akin").
                 lastName("Akintola").
@@ -40,7 +38,7 @@ class UserIdentityServiceTest {
     }
     @Test
     void signupUser() throws IdentityManagerException {
-            UserIdentity saveResponse = createUserUseCase. signup(userIdentity);
+            UserIdentity saveResponse = createUserUseCase.signup(userIdentity);
             assertNotNull(saveResponse);
             assertEquals(saveResponse.getFirstName(), userIdentity.getFirstName());
             assertEquals(saveResponse.getLastName(), userIdentity.getLastName());
