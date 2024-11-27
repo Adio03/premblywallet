@@ -60,9 +60,8 @@ public class PremblyAdapter implements IdentityVerificationManagerOutputPort {
     }
 
     @Override
-    public PremblyResponse verifyBvnLikeness(IdentityVerification identityVerification) throws IdentityVerificationException {
-        IdentityValidator.validateIdentityVerificationRequest(identityVerification);
-        return getBvnDetails(identityVerification);
+    public PremblyResponse verifyNinLikeness(IdentityVerification identityVerification) throws IdentityManagerException, IdentityVerificationException {
+        return getNinDetails(identityVerification);
     }
 
     public PremblyResponse getNinDetails(IdentityVerification identityVerification) throws IdentityManagerException {
@@ -85,7 +84,7 @@ public class PremblyAdapter implements IdentityVerificationManagerOutputPort {
             log.error("Prembly Server error {}", ex.getMessage());
         }
         return responseEntity.getBody();
-    }
+      }
 
     @Override
     public PremblyResponse verifyNin(IdentityVerification identityVerification) throws IdentityVerificationException {
@@ -107,9 +106,11 @@ public class PremblyAdapter implements IdentityVerificationManagerOutputPort {
     }
 
 
+
     @Override
-    public PremblyResponse verifyNinLikeness(IdentityVerification identityVerification) throws IdentityManagerException, IdentityVerificationException {
-        return getNinDetails(identityVerification);
+    public PremblyResponse verifyBvnLikeness(IdentityVerification identityVerification) throws IdentityVerificationException {
+        IdentityValidator.validateIdentityVerificationRequest(identityVerification);
+        return getBvnDetails(identityVerification);
     }
 
     public PremblyResponse getBvnDetails(IdentityVerification identityVerification) {
