@@ -23,7 +23,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Service
 @Slf4j@RequiredArgsConstructor
@@ -88,6 +87,7 @@ public class PremblyAdapter implements IdentityVerificationManagerOutputPort {
         return responseEntity.getBody();
     }
 
+    @Override
     public PremblyResponse verifyNin(IdentityVerification identityVerification) throws IdentityVerificationException {
         validateInput(identityVerification);
         String URL = premblyUrl.concat(PremblyParameter.NIN_URL.getValue());
@@ -135,6 +135,7 @@ public class PremblyAdapter implements IdentityVerificationManagerOutputPort {
         return responseEntity.getBody();
     }
 
+    @Override
     public PremblyResponse verifyBvn(IdentityVerification identityVerification) throws IdentityVerificationException {
         validateInput(identityVerification);
         String URL = premblyUrl.concat(PremblyParameter.BVN_URL.getValue());

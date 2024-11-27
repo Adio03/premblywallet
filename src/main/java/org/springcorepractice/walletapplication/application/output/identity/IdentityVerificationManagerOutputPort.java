@@ -9,8 +9,13 @@ public interface IdentityVerificationManagerOutputPort {
 
     PremblyResponse verifyIdentity( IdentityVerification identityVerification) throws IdentityManagerException, IdentityVerificationException;
 
+    PremblyResponse verifyBvn(IdentityVerification identityVerification) throws IdentityVerificationException;
+
     PremblyResponse verifyLiveliness(IdentityVerification identityVerification);
 
     PremblyResponse verifyBvnLikeness(IdentityVerification identityVerification) throws IdentityManagerException, IdentityVerificationException;
+
+    PremblyResponse verifyNin(IdentityVerification identityVerification) throws IdentityVerificationException;
+
     PremblyResponse verifyNinLikeness(IdentityVerification identityVerification) throws IdentityManagerException, IdentityVerificationException;
 }
